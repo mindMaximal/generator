@@ -1,0 +1,15 @@
+.form {
+
+	&__buttons {
+		margin-top: 50px;
+
+		.ant-form-item-control {
+			max-width: 100%;
+		}
+
+		.ant-btn {
+			margin-right: 5px;
+			margin-bottom: 5px;
+		}
+	}
+}
