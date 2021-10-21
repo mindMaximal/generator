@@ -50,7 +50,7 @@ router.post(
 
       const materialsPromise = () => {
         return new Promise((res, rej) => {
-          connection.query('SELECT `idMaterials` AS `id` FROM `materials', (err, rows) => {
+          connection.query('SELECT `idMaterials` AS `id` FROM `materials`', (err, rows) => {
             if (err) {
               throw err
             }
