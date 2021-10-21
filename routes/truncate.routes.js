@@ -21,46 +21,28 @@ router.post(
       let query
       let connection
 
-      console.log(req.body)
+      connection = initializeConnection(configDB)
 
-      if (req.body.goods && req.body.goods.length > 0) {
-        query = 'INSERT INTO `goods` (`idGoods`, `name`, `price`, `manufacturer`) VALUES'
+      connection.query('SET FOREIGN_KEY_CHECKS = 0;', (err, rows) => {
 
-        for (let i = 0; i < req.body.goods.length; i++) {
-          query += ` (NULL, '${req.body.goods[i].name}', '${req.body.goods[i].price}', '${req.body.goods[i].manufacturer}'),`
+        connection.query('TRUNCATE TABLE `details - goods`;', (err) => {if (err) {throw err}})
+        connection.query('TRUNCATE TABLE `materials - details`;', (err) => {if (err) {throw err}})
+        connection.query('TRUNCATE TABLE `goods`;', (err) => {if (err) {throw err}})
+        connection.query('TRUNCATE TABLE `details`;', (err) => {if (err) {throw err}})
+        connection.query('TRUNCATE TABLE `materials`;', (err) => {if (err) {throw err}})
+
+        connection.query('SET FOREIGN_KEY_CHECKS = 0;', (err) => {if (err) {throw err}})
+
+        connection.end()
+
+        if (err) {
+          throw err
         }
 
-        query = query.substring(0, query.length - 1) + ';'
-
-        connection = initializeConnection(configDB)
-
-        connection.query(query, (err, rows) => {
-          connection.end()
-
-          if (err) {
-            throw err
-          }
-
+        res.json({
+          success: true
         })
-      }
-
-      if (req.body.details && req.body.details.length > 0) {
-        query = 'INSERT INTO `details` (`idDetails`, `name`, `manufacturer`, `color`, `guarantee`) VALUES'
-
-        connection = initializeConnection(configDB)
-
-        connection.query(query, (err, rows) => {
-          connection.end()
-
-          if (err) {
-            throw err
-          }
-
-          res.json({
-            success: true
-          })
-        })
-      }
+      })
     } catch (e) {
       console.log(e)
       res.status(500).json({message: 'Что-то пошло не так, попробуйте снова'})

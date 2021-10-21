@@ -1,4 +1,4 @@
-import { Row, Col } from 'antd'
+import { message, Row, Col } from 'antd'
 import '../styles/Generator.scss'
 import {FormGenerator} from "./FormGenerator"
 import {generateDetails} from "../functions/generateDetails"
@@ -24,13 +24,15 @@ export const Generator = () => {
   const [details, setDetails] = useState([])
   const [materials, setMaterials] = useState([])
 
-  useEffect(() => {
-    console.log(goods)
-  }, [goods])
+  const handleTruncate = (e) => {
+    fetchTruncate()
+  }
 
   const handleGenerate = (e) => {
 
-    console.log(form)
+    setGoods([])
+    setDetails([])
+    setMaterials([])
 
     if (form.tables.goods) {
       setGoods(generateGoods(form.count))
@@ -44,6 +46,7 @@ export const Generator = () => {
       setMaterials(generateMaterials(form.count))
     }
 
+    message.success('Данные сгенерированы!');
   }
 
   const {loading, error, request, clearError} = useHttp()
@@ -55,11 +58,28 @@ export const Generator = () => {
     clearError()
   }, [clearError, error])
 
+  const fetchTruncate = useCallback(async () => {
+    try {
+      const fetched = await request('/api/truncate', 'POST')
+
+      if (fetched.success === true) {
+        message.success('Таблицы были очищены!');
+      } else {
+        message.error('Что-то пошло не так, попробуйте позже ...');
+      }
+
+    } catch (e) {}
+  }, [request])
+
   const fetchLinks = useCallback(async () => {
     try {
       const fetched = await request('/api/links', 'POST')
 
-      console.log('Данные отправлены - связи', fetched)
+      if (fetched.success === true) {
+        message.success('Связи были установлены!');
+      } else {
+        message.error('Что-то пошло не так, попробуйте позже ...');
+      }
 
     } catch (e) {}
   }, [request])
@@ -76,7 +96,11 @@ export const Generator = () => {
         materials
       })
 
-      console.log('Данные отправлены', fetched)
+      if (fetched.success === true) {
+        message.success('Данные добавлены в базу данных!');
+      } else {
+        message.error('Что-то пошло не так, попробуйте позже ...');
+      }
 
     } catch (e) {}
   }, [request])
@@ -107,6 +131,7 @@ export const Generator = () => {
           <FormGenerator
             handleGenerate={handleGenerate}
             handleLinksGenerate={handleLinksGenerate}
+            handleTruncate={handleTruncate}
             setForm={setForm}
             form={form}
           />

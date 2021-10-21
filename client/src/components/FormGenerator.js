@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react"
-import {Button, Checkbox, Input, Form, InputNumber} from "antd"
+import {Button, Checkbox, Input, Form, InputNumber, Popconfirm} from "antd"
 import '../styles/FormGenerator.scss'
 
 const CheckboxGroup = Checkbox.Group
@@ -83,9 +83,25 @@ export const FormGenerator = (props) => {
             Сгенерировать связи
           </Button>
 
-          <Button type="primary" danger ghost>
-            Очистить таблицы
-          </Button>
+
+          <Popconfirm
+            placement="top"
+            className="confirm"
+            title={'Вы уверены что хотите очистить таблицы  базы данных, это приведет к потере всех данных?'}
+            onConfirm={props.handleTruncate}
+            okText="Да"
+            cancelText="Нет">
+
+            <Button
+              type="primary"
+              danger
+              ghost
+            >
+              Очистить таблицы
+            </Button>
+
+          </Popconfirm>
+
         </Form.Item>
       </Form>
 

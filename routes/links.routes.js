@@ -18,44 +18,103 @@ router.post(
   [],
   async (req, res) => {
     try {
-      let query
-      let connection
-
-      const goods = []
-      const details = []
-      const materials = []
-
-      query = 'SELECT `idGoods` FROM `goods`'
+      let connection, goods, details, materials
 
       connection = initializeConnection(configDB)
 
-      connection.query(query, (err, rows) => {
+      const goodsPromise = () => {
+        return new Promise((res, rej) => {
+          connection.query('SELECT `idGoods` AS `id` FROM `goods`', (err, rows) => {
+            if (err) {
+              throw err
+            }
+            goods = Object.values(JSON.parse(JSON.stringify(rows)))
 
-        if (err) {
-          throw err
+            return res(goods)
+          })
+        })
+      }
+
+      const detailsPromise = () => {
+        return new Promise((res, rej) => {
+          connection.query('SELECT `idDetails` AS `id` FROM `details`', (err, rows) => {
+            if (err) {
+              throw err
+            }
+            goods = Object.values(JSON.parse(JSON.stringify(rows)))
+
+            return res(goods)
+          })
+        })
+      }
+
+      const materialsPromise = () => {
+        return new Promise((res, rej) => {
+          connection.query('SELECT `idMaterials` AS `id` FROM `materials', (err, rows) => {
+            if (err) {
+              throw err
+            }
+            goods = Object.values(JSON.parse(JSON.stringify(rows)))
+
+            return res(goods)
+          })
+        })
+      }
+
+      const promises = [goodsPromise(), detailsPromise(), materialsPromise()]
+
+      const detailsGoods = []
+      const materialsDetails = []
+
+      try {
+        let data = await Promise.all(promises)
+
+        connection.end()
+
+        goods = data[0]
+        details = data[1]
+        materials = data[2]
+
+        for (const good of goods) {
+          const n = Math.floor(Math.random() * (10) + 3)
+
+          for (let i = 0; i < n; i++) {
+            const m = Math.floor(Math.random() * details.length)
+
+            detailsGoods.push([
+              null,
+              Math.floor(Math.random() * (30) + 1),
+              good.id,
+              details[m].id
+            ])
+          }
+
         }
-        goods.concat(rows)
-      })
 
-      query = 'SELECT `idDetails` FROM `details`'
+        for (const detail of details) {
 
-      connection.query(query, (err, rows) => {
+          const n = Math.floor(Math.random() * (10) + 3)
 
-        if (err) {
-          throw err
+          for (let i = 0; i < n; i++) {
+            const m = Math.floor(Math.random() * details.length)
+
+            materialsDetails.push([
+              null,
+              Math.floor(Math.random() * (30) + 1),
+              detail.id,
+              materials[m].id
+            ])
+          }
         }
-        details.concat(rows)
-      })
 
-      query = 'SELECT `idMaterials` FROM `materials`'
+      } catch (e) {
+        console.log(e)
+      }
 
-      connection.query(query, (err, rows) => {
+      connection = initializeConnection(configDB)
 
-        if (err) {
-          throw err
-        }
-        materials.concat(rows)
-      })
+      connection.query('INSERT INTO `details - goods` (`id`, `count`, `idDetails`, `idGoods`) VALUES ?', [detailsGoods], (err) => {if (err) throw err})
+      connection.query('INSERT INTO `materials - details` (`id`, `count`, `idMaterials`, `idDetails`) VALUES ?', [materialsDetails], (err) => {if (err) throw err})
 
       connection.end()
 
