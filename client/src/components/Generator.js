@@ -1,13 +1,15 @@
-import { message, Row, Col } from 'antd'
+import {message, Row, Col, Button} from 'antd'
 import '../styles/Generator.scss'
 import {FormGenerator} from "./FormGenerator"
 import {generateDetails} from "../functions/generateDetails"
 import {useCallback, useEffect, useState} from "react"
-import {ViewData} from "./ViewData";
-import {generateGoods} from "../functions/generateGoods";
-import {generateMaterials} from "../functions/generatorMaterials";
-import {useHttp} from "../hooks/http.hook";
-import {Loader} from "./Loader";
+import {ViewData} from "./ViewData"
+import {generateGoods} from "../functions/generateGoods"
+import {generateMaterials} from "../functions/generatorMaterials"
+import {useHttp} from "../hooks/http.hook"
+import {Loader} from "./Loader"
+import {FormRequests} from "./FormRequests";
+import {ViewList} from "./ViewList";
 
 export const Generator = () => {
 
@@ -24,15 +26,23 @@ export const Generator = () => {
   const [details, setDetails] = useState([])
   const [materials, setMaterials] = useState([])
 
+  const [list, setList] = useState([])
+
   const handleTruncate = (e) => {
     fetchTruncate()
   }
 
-  const handleGenerate = (e) => {
-
+  const clearData = () => {
     setGoods([])
     setDetails([])
     setMaterials([])
+  }
+
+  const handleGenerate = (e) => {
+
+    console.log(e)
+
+    clearData()
 
     if (form.tables.goods) {
       setGoods(generateGoods(form.count))
@@ -120,6 +130,7 @@ export const Generator = () => {
 
           </header>
         </Col>
+
       </Row>
 
       <Row className="generator__main">
@@ -138,14 +149,39 @@ export const Generator = () => {
 
         </Col>
 
+        <Col span={12}>
+
+          <FormRequests
+            setList={setList}
+          />
+
+        </Col>
+
         <Col span={24}>
 
-          <ViewData
-            goods={goods}
-            details={details}
-            materials={materials}
-            sendData={sendData}
-          />
+          {
+            list && list.length > 0 &&
+              <ViewList
+                list={list}
+                setList={setList}
+              />
+          }
+
+        </Col>
+
+        <Col span={24}>
+
+          {
+            (goods && goods.length > 0) || (details && details.length > 0) || (materials && materials.length > 0) ?
+              <ViewData
+                goods={goods}
+                details={details}
+                materials={materials}
+                sendData={sendData}
+                clearData={clearData}
+              /> :
+              null
+          }
 
         </Col>
       </Row>

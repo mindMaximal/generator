@@ -81,14 +81,25 @@ router.post(
           for (let i = 0; i < n; i++) {
             const m = Math.floor(Math.random() * details.length)
 
-            detailsGoods.push([
+            const tmp = [
               null,
               Math.floor(Math.random() * (30) + 1),
               good.id,
               details[m].id
-            ])
-          }
+            ]
+            let flag = true
 
+            for (const el of detailsGoods) {
+              if (el[2] === tmp[2] && el[3] === tmp[3]) {
+                flag = false
+                break
+              }
+            }
+
+            if (flag) {
+              detailsGoods.push(tmp)
+            }
+          }
         }
 
         for (const detail of details) {
@@ -98,12 +109,24 @@ router.post(
           for (let i = 0; i < n; i++) {
             const m = Math.floor(Math.random() * details.length)
 
-            materialsDetails.push([
+            const tmp = [
               null,
               Math.floor(Math.random() * (30) + 1),
               detail.id,
               materials[m].id
-            ])
+            ]
+            let flag = true
+
+            for (const el of materialsDetails) {
+              if (el[2] === tmp[2] && el[3] === tmp[3]) {
+                flag = false
+                break
+              }
+            }
+
+            if (flag) {
+              materialsDetails.push(tmp)
+            }
           }
         }
 

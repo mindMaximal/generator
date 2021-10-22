@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react"
-import {Button, Checkbox, Input, Form, InputNumber, Popconfirm} from "antd"
+import {Button, Checkbox, Input, Form, InputNumber, Popconfirm, Space} from "antd"
 import '../styles/FormGenerator.scss'
 
 const CheckboxGroup = Checkbox.Group
@@ -67,40 +67,42 @@ export const FormGenerator = (props) => {
         </Form.Item>
 
         <Form.Item className="form__buttons">
-          <Button
-            type="primary"
-            htmlType="submit"
-            onClick={props.handleGenerate}
-          >
-            Сгенерировать данные
-          </Button>
-
-          <Button
-            type="primary"
-            ghost
-            onClick={props.handleLinksGenerate}
-          >
-            Сгенерировать связи
-          </Button>
-
-
-          <Popconfirm
-            placement="top"
-            className="confirm"
-            title={'Вы уверены что хотите очистить таблицы  базы данных, это приведет к потере всех данных?'}
-            onConfirm={props.handleTruncate}
-            okText="Да"
-            cancelText="Нет">
+          <Space size={'small'}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={props.handleGenerate}
+            >
+              Сгенерировать данные
+            </Button>
 
             <Button
               type="primary"
-              danger
               ghost
+              onClick={props.handleLinksGenerate}
             >
-              Очистить таблицы
+              Сгенерировать связи
             </Button>
 
-          </Popconfirm>
+
+            <Popconfirm
+              placement="top"
+              className="confirm"
+              title={'Вы уверены что хотите очистить таблицы  базы данных, это приведет к потере всех данных?'}
+              onConfirm={props.handleTruncate}
+              okText="Да"
+              cancelText="Нет">
+
+              <Button
+                type="primary"
+                danger
+                ghost
+              >
+                Очистить таблицы
+              </Button>
+
+            </Popconfirm>
+          </Space>
 
         </Form.Item>
       </Form>

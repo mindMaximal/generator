@@ -21,8 +21,6 @@ router.post(
       let query
       let connection
 
-      console.log(req.body)
-
       if (req.body.goods && req.body.goods.length > 0) {
         query = 'INSERT INTO `goods` (`idGoods`, `name`, `price`, `manufacturer`) VALUES'
 

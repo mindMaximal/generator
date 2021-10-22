@@ -1,4 +1,4 @@
-import {Button, Collapse, Table} from "antd"
+import {Button, Collapse, Space, Table} from "antd"
 import '../styles/ViewData.scss'
 
 const { Panel } = Collapse
@@ -62,18 +62,31 @@ export const ViewData = (props) => {
   return (
     <div className="view-data">
 
-      {
-        (props.goods && props.goods.length > 0) || (props.details && props.details.length > 0) || (props.materials && props.materials.length > 0) ?
-          <div className="view-data__buttons">
+      <div className="flex">
+
+        <h2>Сгенерированные данные</h2>
+
+        <div className="view-data__buttons">
+          <Space size={'small'}>
             <Button
               type="primary"
               onClick={props.sendData}
             >
               Добавить в базу данных
             </Button>
-          </div> :
-          null
-      }
+
+            <Button
+              type="primary"
+              danger
+              ghost
+              onClick={props.clearData}
+            >
+              Очистить данные
+            </Button>
+          </Space>
+        </div>
+
+      </div>
 
       <Collapse accordion>
 

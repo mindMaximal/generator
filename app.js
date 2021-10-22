@@ -8,7 +8,7 @@ const __dirname = path.resolve()
 import apiAdd from './routes/add.routes.js'
 import apiTruncate from './routes/truncate.routes.js'
 import apiLinks from './routes/links.routes.js'
-//import apiMapFilter from './routes/filter.routes.js'
+import apiData from './routes/data.routes.js'
 
 app.use(express.json({
   extended: true,
@@ -18,6 +18,7 @@ app.use(express.json({
 app.use('/api/add', apiAdd)
 app.use('/api/truncate', apiTruncate)
 app.use('/api/links', apiLinks)
+app.use('/api/data', apiData)
 //app.use('/api/map', apiMap)
 
 if (process.env.NODE_ENV === 'production') {
