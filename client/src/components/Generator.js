@@ -25,8 +25,11 @@ export const Generator = () => {
   const [goods, setGoods] = useState([])
   const [details, setDetails] = useState([])
   const [materials, setMaterials] = useState([])
+  const [listLoading, setListLoading] = useState(false)
 
   const [list, setList] = useState([])
+  const [type, setType] = useState(null)
+  const [title, setTitle] = useState('')
 
   const handleTruncate = (e) => {
     fetchTruncate()
@@ -153,6 +156,9 @@ export const Generator = () => {
 
           <FormRequests
             setList={setList}
+            setType={setType}
+            setTitle={setTitle}
+            setLoading={setListLoading}
           />
 
         </Col>
@@ -164,6 +170,9 @@ export const Generator = () => {
               <ViewList
                 list={list}
                 setList={setList}
+                type={type}
+                title={title}
+                loading={listLoading}
               />
           }
 

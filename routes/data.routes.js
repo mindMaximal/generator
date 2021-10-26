@@ -12,9 +12,9 @@ const configDB = {
   database: config.get('database')
 }
 
-// /api/data/list
+// /api/data/list/goods
 router.post(
-  '/list',
+  '/list/goods',
   [],
   async (req, res) => {
     try {
@@ -74,6 +74,71 @@ router.post(
     }
   })
 
+// /api/data/materials
+router.post(
+  '/list/materials',
+  [],
+  async (req, res) => {
+    try {
+      let connection
+
+      connection = initializeConnection(configDB)
+
+      connection.query('SELECT `idMaterials`, `name` FROM `materials`', (err, rows) => {
+        connection.end()
+
+        if (err) {
+          throw err
+        }
+
+        res.status(200).json(rows)
+
+      })
+
+
+    } catch (e) {
+      console.log(e)
+      res.status(500).json({message: 'Что-то пошло не так, попробуйте снова'})
+    }
+  })
+
+// /api/data/goods
+router.post(
+  '/goods',
+  [],
+  async (req, res) => {
+    try {
+      let connection
+
+      connection = initializeConnection(configDB)
+
+      connection.query(
+        'SELECT `goods`.`name`, `materials - details`.`count`' +
+        ' FROM `materials - details`' +
+        ' RIGHT JOIN `details` ON `details`.`idDetails` = `materials - details`.`idDetails`' +
+        ' RIGHT JOIN `details - goods` ON `details - goods`.`idDetails` = `materials - details`.`idDetails`' +
+        ' RIGHT JOIN `goods` ON `goods`.`idGoods` = `details - goods`.`idGoods`' +
+        ' WHERE `materials - details`.`idMaterials` = ' + req.body.id +
+        ' GROUP BY `goods`.`idGoods`' +
+        ' ORDER BY `materials - details`.`count` DESC',
+        (err, rows) => {
+          connection.end()
+
+          if (err) {
+            throw err
+          }
+
+          res.status(200).json(rows)
+
+        })
+
+
+    } catch (e) {
+      console.log(e)
+      res.status(500).json({message: 'Что-то пошло не так, попробуйте снова'})
+    }
+  })
+
 export default router
 
 /*
@@ -110,5 +175,37 @@ FROM `details - goods`
 RIGHT JOIN `details` ON `details - goods`.`idDetails` = `details`.`idDetails`
 WHERE `details - goods`.`idGoods` = 5
 ORDER BY `details`.`name`
+
+
+================== 2 ========================
+
+SELECT *
+FROM `materials - details`
+RIGHT JOIN `details` ON `details`.`idDetails` = `materials - details`.`idDetails`
+RIGHT JOIN `details - goods` ON `details - goods`.`idDetails` = `materials - details`.`idDetails`
+RIGHT JOIN `goods` ON `goods`.`idGoods` = `details - goods`.`idGoods`
+WHERE `materials - details`.`idMaterials` = 1
+ORDER BY `materials - details`.`count` DESC
+
+SELECT `goods`.`name`
+FROM `materials - details`
+RIGHT JOIN `details` ON `details`.`idDetails` = `materials - details`.`idDetails`
+RIGHT JOIN `details - goods` ON `details - goods`.`idDetails` = `materials - details`.`idDetails`
+RIGHT JOIN `goods` ON `goods`.`idGoods` = `details - goods`.`idGoods`
+WHERE `materials - details`.`idMaterials` = 1
+GROUP BY `goods`.`idGoods`
+ORDER BY `materials - details`.`count` DESC
+
+SELECT SUM(`materials - details`.`count`) FROM `materials - details`
+WHERE `materials - details`.`idDetails` = 1
+
+SELECT `goods`.`name`, `materials - details`.`count`
+FROM `materials - details`
+RIGHT JOIN `details` ON `details`.`idDetails` = `materials - details`.`idDetails`
+RIGHT JOIN `details - goods` ON `details - goods`.`idDetails` = `materials - details`.`idDetails`
+RIGHT JOIN `goods` ON `goods`.`idGoods` = `details - goods`.`idGoods`
+WHERE `materials - details`.`idMaterials` = 1
+GROUP BY `goods`.`idGoods`
+ORDER BY `materials - details`.`count` DESC
 
  */
